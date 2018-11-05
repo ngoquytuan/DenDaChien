@@ -1,0 +1,1166 @@
+#include "DK_RFM98.h"
+
+/************************Description************************
+//  RF module:           RFM98
+
+//  FSK:
+//  Carry Frequency:     434MHz
+//  Bit Rate:            1.2Kbps/2.4Kbps/4.8Kbps/9.6Kbps
+//  Tx Power Output:     20dbm/17dbm/14dbm/11dbm
+//  Frequency Deviation: +/-35KHz
+//  Receive Bandwidth:   83KHz
+//  Coding:              NRZ
+//  Packet Format:       0x5555555555+0xAA2DD4+"HopeRF RFM COBRFM98-S" (total: 29 bytes)
+  
+//  LoRa:
+//  Carry Frequency:     434MHz
+//  Spreading Factor:    6/7/8/9/10/11/12
+//  Tx Power Output:     20dbm/17dbm/14dbm/11dbm
+//  Receive Bandwidth:   7.8KHz/10.4KHz/15.6KHz/20.8KHz/31.2KHz/41.7KHz/62.5KHz/125KHz/250KHz/500KHz
+//  Coding:              NRZ
+//  Packet Format:       "HopeRF RFM COBRFM98-S" (total: 21 bytes)
+
+//  Tx Current:          about 120mA  (RFOP=+20dBm,typ.)
+//  Rx Current:          about 11.5mA  (typ.)       
+**********************************************************/
+
+/**********************************************************
+**Define display parameter
+**********************************************************/
+//RFM98
+const u8  C_RFM98_ModuleName[]={"98  "};
+const u16 C_RFM98_FreqBuf[]={434,0};
+const u8  C_RFM98_RateBuf[]={12,24,48,96,0};
+const u8  C_RFM98_PowerBuf[]={20,17,13,11,0};
+const u8  C_RFM98_FdevBuf[]={35,0};
+const u8  C_RFM98_BandBuf[]={83,0};
+const u8  C_RFM98_RSSIBuf[]={25,50,70,95,0};
+const u8  C_RFM98_ModemBuf[]={C_SysMode_LoRa,C_SysMode_FSK,0};
+const u8  C_RFM98_SpreadFactorBuf[]={6,7,8,9,10,11,12,0};
+const u16 C_RFM98_LoRaBandBuf[]={78,104,156,208,312,417,625,1250,2500,5000,0};
+const u8  C_RFM98_LoRaRSSIBuf[]={40,60,90,120,0};
+
+u8  gb_RxData[32];                                         //Receive data buffer
+u8  gb_StatusTx=0;                                         //Tx status flag
+u8  gb_StatusRx=0;                                         //Rx status flag
+u8  gb_ErrorFlag=0;                                        //Error flag
+volatile u8  gb_SysTimer=0;                             //System timer for 1S
+
+u8  gb_SystemMode=0;                                       //System mode
+u8  gb_SysMode_Set;                                        //System mode-Set mode
+u16 gw_RF_SentInterval;                                    //Send interval
+u16 gw_TxTimer=0;                                          //Send timer (time base 1S)
+u8  gb_ModuleWorkEnableFlag=0;                             //Enable module work in Tx/Rx mode
+u8  gb_ModuleWorkMode=0;                                   //Module work mode
+u8  gb_RF_RSSI=0;                                          //RF RSSI signal
+u8  gb_FirstPowerUpFlag=0;                                 //First power flag
+u8  gb_ParameterChangeFlag=0;                              //Parameter change flag
+
+u8  *RF_ModuleName;                                        //Module name cache
+u16 *RF_FreqBuf;                                           //RF center frequency cache
+u8  *RF_RateBuf;                                           //RF rate cache
+u8  *RF_PowerBuf;                                          //RF power cache
+u8  *RF_FdevBuf;                                           //RF deviation cache
+u8  *RF_BandBuf;                                           //RF bandwidth cache
+u8  *RF_RSSIBuf;                                           //RF RSSI cache
+u8  *RF_ModemBuf;                                          //RF modem cache
+u16 *RF_LoRaBandWidthBuf;                                  //RF LoRa bandwidth cache
+u8  gb_FreqBuf_Addr=0;                                     //RF center frequency cache address
+u8  gb_RateBuf_Addr=0;
+u8  gb_PowerBuf_Addr=0;
+u8  gb_FdevBuf_Addr=0;
+u8  gb_BandBuf_Addr=0;
+u8  gb_Modem_Addr=0;
+u8  gb_Modem_Addr_Backup=0;
+
+//u8  gb_SpreadFactor_Addr=0;
+
+u16 gw_SendDataCount=0;                                    //Send data count
+u16 gw_ReceiveDataCount=0;                                 //Receive data count
+
+unsigned char Tx_request=0;
+
+/**********************************************************
+**Parameter table define
+**********************************************************/
+const u16 RFM98FreqTbl[1][3] = 
+{ 
+  {0x066C, 0x0780, 0x0800}, //434MHz
+};
+
+const u16 RFM98PowerTbl[4] =
+{ 
+  0x09FF,                   //20dbm  
+  0x09FC,                   //17dbm
+  0x09F9,                   //14dbm
+  0x09F6,                   //11dbm 
+};
+
+const u8 RFM98SpreadFactorTbl[7] =
+{
+  6,7,8,9,10,11,12
+};
+
+const u8 RFM98LoRaBwTbl[10] =
+{
+//7.8KHz,10.4KHz,15.6KHz,20.8KHz,31.2KHz,41.7KHz,62.5KHz,125KHz,250KHz,500KHz
+  0,1,2,3,4,5,6,7,8,9
+};
+
+u8  RFM98Data[21] = {"DOAN NGOC SON  221085"};//MAX Length = 21
+
+/**********************************************************
+**Variable define
+**********************************************************/
+u8 gb_WaitStableFlag=0;                                    //State stable flag
+
+void RFM98_Config(u8 mode);
+
+///////////////////////////////////////////////// LoRa mode //////////////////////////////////////////////////
+//Error Coding rate (CR)setting 
+//#define CR_4_5    
+//#define CR_4_6    0
+//#define CR_4_7    0
+#define CR_4_8
+
+#ifdef   CR_4_5
+  #define CR    0x01                                       // 4/5
+#else
+  #ifdef   CR_4_6
+    #define CR    0x02                                     // 4/6
+  #else 
+    #ifdef   CR_4_7 
+      #define CR    0x03                                   // 4/7
+    #else 
+      #ifdef   CR_4_8
+        #define CR    0x04                                 // 4/8
+      #endif
+    #endif
+  #endif
+#endif 
+
+//CRC Enable
+#define CRC_EN    
+
+#ifdef  CRC_EN
+  #define CRC   0x01                                       //CRC Enable
+#else
+  #define CRC   0x00
+#endif
+
+//RFM98 Internal registers Address
+#define LR_RegFifo                                  0x0000
+// Common settings
+#define LR_RegOpMode                                0x0100
+#define LR_RegFrMsb                                 0x0600
+#define LR_RegFrMid                                 0x0700
+#define LR_RegFrLsb                                 0x0800
+// Tx settings
+#define LR_RegPaConfig                              0x0900
+#define LR_RegPaRamp                                0x0A00
+#define LR_RegOcp                                   0x0B00
+// Rx settings
+#define LR_RegLna                                   0x0C00
+// LoRa registers
+#define LR_RegFifoAddrPtr                           0x0D00
+#define LR_RegFifoTxBaseAddr                        0x0E00
+#define LR_RegFifoRxBaseAddr                        0x0F00
+#define LR_RegFifoRxCurrentaddr                     0x1000
+#define LR_RegIrqFlagsMask                          0x1100
+#define LR_RegIrqFlags                              0x1200
+#define LR_RegRxNbBytes                             0x1300
+#define LR_RegRxHeaderCntValueMsb                   0x1400
+#define LR_RegRxHeaderCntValueLsb                   0x1500
+#define LR_RegRxPacketCntValueMsb                   0x1600
+#define LR_RegRxPacketCntValueLsb                   0x1700
+#define LR_RegModemStat                             0x1800
+#define LR_RegPktSnrValue                           0x1900
+#define LR_RegPktRssiValue                          0x1A00
+#define LR_RegRssiValue                             0x1B00
+#define LR_RegHopChannel                            0x1C00
+#define LR_RegModemConfig1                          0x1D00
+#define LR_RegModemConfig2                          0x1E00
+#define LR_RegSymbTimeoutLsb                        0x1F00
+#define LR_RegPreambleMsb                           0x2000
+#define LR_RegPreambleLsb                           0x2100
+#define LR_RegPayloadLength                         0x2200
+#define LR_RegMaxPayloadLength                      0x2300
+#define LR_RegHopPeriod                             0x2400
+#define LR_RegFifoRxByteAddr                        0x2500
+
+// I/O settings
+#define REG_LR_DIOMAPPING1                          0x4000
+#define REG_LR_DIOMAPPING2                          0x4100
+// Version
+#define REG_LR_VERSION                              0x4200
+// Additional settings
+#define REG_LR_PLLHOP                               0x4400
+#define REG_LR_TCXO                                 0x4B00
+#define REG_LR_PADAC                                0x4D00
+#define REG_LR_FORMERTEMP                           0x5B00
+
+#define REG_LR_AGCREF                               0x6100
+#define REG_LR_AGCTHRESH1                           0x6200
+#define REG_LR_AGCTHRESH2                           0x6300
+#define REG_LR_AGCTHRESH3                           0x6400
+
+/*********************************************************/
+//command
+/*********************************************************/
+/**********************************************************
+**Name:     InitSystemParameter
+**Function: Initial system parameter
+**Input:    none
+**Output:   none
+**********************************************************/
+void InitSystemParameter(void)
+{
+	gw_SendDataCount=0;                                      //Send data count
+	gw_ReceiveDataCount=0;                                   //Receive data count
+	
+	if(RF_ModemBuf[1]==0 && gb_SystemMode==C_SysMode_Modem){gb_SystemMode=C_SysMode_Set;}      //Direct entry set mode when the modem mode only one
+
+	gw_RF_SentInterval=C_RF_SentInterval;                    //RF parameter Send interval time(ms)
+	
+	RF_ModemBuf=(u8*)C_RFM98_ModemBuf;
+	if(RF_ModemBuf[gb_Modem_Addr]==C_SysMode_FSK)
+	{
+		RF_ModuleName=(u8*)C_RFM98_ModuleName;
+		RF_FreqBuf=(u16*)C_RFM98_FreqBuf;
+		RF_RateBuf=(u8*)C_RFM98_RateBuf;
+		RF_PowerBuf=(u8*)C_RFM98_PowerBuf;
+		RF_FdevBuf=(u8*)C_RFM98_FdevBuf;
+		RF_BandBuf=(u8*)C_RFM98_BandBuf;
+		RF_RSSIBuf=(u8*)C_RFM98_RSSIBuf;
+	}
+	else if(RF_ModemBuf[gb_Modem_Addr]==C_SysMode_LoRa)
+	{
+		RF_ModuleName=(u8*)C_RFM98_ModuleName;
+		RF_FreqBuf=(u16*)C_RFM98_FreqBuf;
+		RF_PowerBuf=(u8*)C_RFM98_PowerBuf;
+		RF_FdevBuf=(u8*)C_RFM98_FdevBuf;
+		RF_RateBuf=(u8*)C_RFM98_SpreadFactorBuf;
+		RF_LoRaBandWidthBuf=(u16*)C_RFM98_LoRaBandBuf;
+		RF_RSSIBuf=(u8*)C_RFM98_LoRaRSSIBuf;
+		gb_RateBuf_Addr=6;//Spread Spectrum Factor = 12
+		gb_BandBuf_Addr=9;//Bandwidth = 7.8kHz
+	}
+	
+	if(gb_FirstPowerUpFlag==1)                               //FirstPowerUp
+	{
+		if((gb_SystemMode>=C_SysMode_FSKTx && gb_SystemMode<=C_SysMode_LoRaTRx) || (gb_SystemMode>=C_SysMode_TestTx && gb_SystemMode<=C_SysMode_Sleep))
+		{
+			switch(RF_ModemBuf[gb_Modem_Addr])
+			{
+				case C_SysMode_FSK:
+				gb_ModuleWorkMode=C_ModuleWorkMode_FSK;          //Module entry FSK mode
+				break;
+				case C_SysMode_OOK:
+				gb_ModuleWorkMode=C_ModuleWorkMode_OOK;          //Module entry OOK mode
+				break;
+				case C_SysMode_LoRa:
+				gb_ModuleWorkMode=C_ModuleWorkMode_LoRa;         //Module entry LoRa mode
+				break;
+			}
+			//if(gb_SystemMode==C_SysMode_Standby){gb_ModuleWorkMode=C_ModuleWorkMode_Standby;}   //Module entry standby mode
+			if(gb_SystemMode==C_SysMode_Sleep){gb_ModuleWorkMode=C_ModuleWorkMode_Sleep;}       //Module entry sleep mode
+			
+			gb_ModuleWorkEnableFlag=1;                           //Enable module work in Tx/Rx mode
+			gb_ParameterChangeFlag=1;                            //Enalbe entry normal mode
+		}
+		else
+		{
+			if(gb_SystemMode==C_SysMode_EntrySet)
+			{
+				gb_SysMode_Set=C_SysMode_Set_Freq;                 //Modify SysMode set
+			}
+			gb_ModuleWorkEnableFlag=0;                           //Disable module work in Tx/Rx mode
+			gb_ModuleWorkMode=C_ModuleWorkMode_Standby;          //Module entry stanby mode
+			gb_ParameterChangeFlag=2;
+		}
+	}
+}
+
+/**********************************************************
+**Name:     ModuleSelectModeEntryCheck
+**Function: Confirm whether you can enter module select mode
+**Input:    none
+**Output:   none
+**********************************************************/
+void ModuleSelectModeEntryCheck(void)
+{
+	gb_FirstPowerUpFlag=1;					//FirstPowerUp
+	gb_FreqBuf_Addr=0;						//434
+	gb_RateBuf_Addr=0;						//12
+	gb_PowerBuf_Addr=0;						//20
+	gb_FdevBuf_Addr=0;						//35
+	gb_BandBuf_Addr=0;						//83
+	gb_Modem_Addr_Backup=gb_Modem_Addr=0;
+	
+	InitSystemParameter();
+}
+
+/**********************************************************
+**Name:     RFM98_Standby
+**Function: Entry standby mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_Standby(void)
+{
+  SPIWrite(LR_RegOpMode+0x01+0x08);                              //Standby
+}
+
+/**********************************************************
+**Name:     RFM98_Sleep
+**Function: Entry sleep mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_Sleep(void)
+{
+  SPIWrite(LR_RegOpMode+0x00+0x08);                              //Sleep
+}
+
+
+/*********************************************************/
+//LoRa mode
+/*********************************************************/
+/**********************************************************
+**Name:     RFM98_EntryLoRa
+**Function: Set RFM69 entry LoRa(LongRange) mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_EntryLoRa(void)
+{
+  SPIWrite(LR_RegOpMode+0x80+0x08);
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaClearIrq
+**Function: Clear all irq
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_LoRaClearIrq(void)
+{
+  SPIWrite(LR_RegIrqFlags+0xFF);
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaEntryRx
+**Function: Entry Rx mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_LoRaEntryRx(void)
+{
+  u8 addr; 
+        
+  RFM98_Config(0);                                         //setting base parameter
+  
+  SPIWrite(0x4D00+0x84);                                   //Normal and Rx
+  SPIWrite(LR_RegHopPeriod+0xFF);                          //RegHopPeriod NO FHSS
+  SPIWrite(REG_LR_DIOMAPPING1+0x01);                       //DIO0=00, DIO1=00, DIO2=00, DIO3=01
+      
+  SPIWrite(LR_RegIrqFlagsMask+0x3F);                       //Open RxDone interrupt & Timeout
+  RFM98_LoRaClearIrq();   
+  
+  SPIWrite(LR_RegPayloadLength+ 21);                       //RegPayloadLength  21byte(this register must difine when the data long of one byte in SF is 6)
+    
+  addr = SPIRead((u8)(LR_RegFifoRxBaseAddr>>8));           //Read RxBaseAddr
+  SPIWrite(LR_RegFifoAddrPtr+addr);                        //RxBaseAddr -> FiFoAddrPtr¡¡ 
+  SPIWrite(LR_RegOpMode+0x05+0x08);                        //Continuous Rx Mode
+  
+  gb_SysTimer=3;										   //System time = 3S
+  gb_StatusTx=0;                                           //Clear Tx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initials
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaRxWaitStable
+**Function: Determine whether the state of stable Rx
+**Input:    none
+**Output:   none
+**********************************************************/
+void RFM98_LoRaRxWaitStable(void)
+{ 
+  if(gb_WaitStableFlag==0x0f) 
+  {
+    if(gb_SysTimer!=0)
+    {
+      if((SPIRead((u8)(LR_RegModemStat>>8))&0x04)==0x04)   //Rx-on going RegModemStat
+      {
+        gb_WaitStableFlag=1;        
+      }
+    }
+    else
+    {
+      gb_ErrorFlag=1;
+      gb_WaitStableFlag=0;
+    }
+  }
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaReadRSSI
+**Function: Read the RSSI value
+**Input:    none
+**Output:   temp, RSSI value
+**********************************************************/
+u8 RFM98_LoRaReadRSSI(void)
+{
+  u16 temp=10;
+  temp=SPIRead((u8)(LR_RegRssiValue>>8));                  //Read RegRssiValue£¬Rssi value
+  temp=temp+127-137;                                       //127:Max RSSI, 137:RSSI offset
+  return (u8)temp;
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaRxPacket
+**Function: Receive data in LoRa mode
+**Input:    None
+**Output:   1- Success
+            0- Fail
+**********************************************************/
+u8 RFM98_LoRaRxPacket(void)
+{
+  u8 i; 
+  u8 addr;
+  u8 packet_size;
+  
+  
+  RFM98_LoRaRxWaitStable(); 
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    gb_StatusRx=1;                                         //Rx state stable
+  }       
+ 
+  if((nIRQ0) && (gb_StatusRx==1))
+  {
+    for(i=0;i<32;i++) 
+      gb_RxData[i] = 0x00;
+    
+    addr = SPIRead((u8)(LR_RegFifoRxCurrentaddr>>8));      //last packet addr
+    SPIWrite(LR_RegFifoAddrPtr+addr);                      //RxBaseAddr -> FiFoAddrPtr    
+    if(RFM98SpreadFactorTbl[gb_RateBuf_Addr]==6)           //When SpreadFactor is six£¬will used Implicit Header mode(Excluding internal packet length)
+      packet_size=21;
+    else
+      packet_size = SPIRead((u8)(LR_RegRxNbBytes>>8));     //Number for received bytes    
+    SPIBurstRead(0x00, gb_RxData, packet_size);
+    
+    RFM98_LoRaClearIrq();
+	return 1;
+	//Header check require
+    for(i=0;i<17;i++)
+    {
+      if(gb_RxData[i]!=RFM98Data[i])
+        break;  
+    }    
+    if(i>=17)                                              //Rx success
+      return 1;
+    else
+      return 0;
+  }
+  else
+    return 0;
+}
+
+/**********************************************************
+**Name:     RFM98_LoRaEntryTx
+**Function: Entry Tx mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_LoRaEntryTx(void)
+{
+  u8 addr;
+  
+  RFM98_Config(0);                                         //setting base parameter
+  SPIWrite(0x4D00+0x87);                                   //Tx for 20dBm
+  SPIWrite(LR_RegHopPeriod);                               //RegHopPeriod NO FHSS
+  SPIWrite(REG_LR_DIOMAPPING1+0x41);                       //DIO0=01, DIO1=00, DIO2=00, DIO3=01
+  
+  RFM98_LoRaClearIrq();
+  SPIWrite(LR_RegIrqFlagsMask+0xF7);                       //Open TxDone interrupt
+  SPIWrite(LR_RegPayloadLength+ 21);                       //RegPayloadLength  21byte
+  
+  addr = SPIRead((u8)(LR_RegFifoTxBaseAddr>>8));           //RegFiFoTxBaseAddr
+  SPIWrite(LR_RegFifoAddrPtr+addr);                        //RegFifoAddrPtr
+    
+  gb_SysTimer=3;                                        //System time = 3S
+  gb_StatusRx=0;                                           //Clear Rx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initial
+}
+/**********************************************************
+**Name:     RFM69_TxWaitStable
+**Function: Determine whether the state of stable Tx
+**Input:    none
+**Output:   none
+**********************************************************/
+void RFM98_LoRaTxWaitStable(void)
+{
+  u8 temp; 
+  
+  if(gb_WaitStableFlag==0x0f) 
+  {
+    if(gb_SysTimer!=0)
+    {
+      temp=SPIRead((u8)(LR_RegPayloadLength>>8));
+
+	  if(temp==21)
+      {
+        gb_WaitStableFlag=1; 
+      }
+    }
+    else
+    {
+      gb_ErrorFlag=1;
+      gb_WaitStableFlag=0;
+    }
+  }
+}
+/**********************************************************
+**Name:     RFM98_LoRaTxPacket
+**Function: Send data in LoRa mode
+**Input:    None
+**Output:   1- Send over
+**********************************************************/
+u8 RFM98_LoRaTxPacket(void)
+{ 
+  u8 TxFlag=0;
+  u8 addr;
+  
+  
+  RFM98_LoRaTxWaitStable();
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    if(gb_StatusTx==0)                                     //First entry Tx mode
+    {
+	  gb_StatusTx=1;                                       //Tx state stable                     
+//       gw_TxTimer=gw_RF_SentInterval;                       //Send time interval 
+      BurstWrite(0x00, (u8 *)RFM98Data, 21);
+      SPIWrite(LR_RegOpMode+0x03+0x08);                    //Tx Mode           
+      TxFlag=1;
+      gb_WaitStableFlag=3;
+    }
+  }
+  if(gb_StatusTx==1)
+  {
+    if(gb_WaitStableFlag==3 && nIRQ0)                      //Packet send over
+    {
+      SPIRead((u8)(LR_RegIrqFlags>>8));
+      RFM98_LoRaClearIrq();                                //Clear irq
+      
+      gb_WaitStableFlag=0;
+      RFM98_Standby();                                     //Entry Standby mode      
+    }   
+    if(Tx_request==1 && gb_WaitStableFlag==0)              //It's time to Sending
+    {
+//       gw_TxTimer=gw_RF_SentInterval;                       //Send time interval      
+      //Send data 
+      addr = SPIRead((u8)(LR_RegFifoTxBaseAddr>>8));       //RegFiFoTxBaseAddr
+      SPIWrite(LR_RegFifoAddrPtr+addr);                    //RegFifoAddrPtr
+      BurstWrite(0x00, (u8 *)RFM98Data, 21);
+      SPIWrite(LR_RegOpMode+0x03+0x08);                    //Tx Mode 
+      
+      gb_WaitStableFlag=3;                                 //Promised to call mode stable decide
+      TxFlag=1;
+// 	  Tx_request=0;
+    }
+  }
+  return TxFlag;  
+}
+
+
+///////////////////////////////////////////////// FSK mode //////////////////////////////////////////////////
+const u16 RFM98ConfigTbl[16] = 
+{ 
+  0x0402,                   //RegFdevMsb  35KHz 
+  0x053D,                   //RegFdevLsb
+  0x0B0B,                   //RegOcp  Close Ocp
+  //0x0C20,                 //RegLNA  High & LNA Disable
+  0x0C23,                   //RegLNA  High & LNA Enable
+  0x1212,                   //RegRxBw   83KHz
+  0x1FA0,                   //RegPreambleDet  Enable 2Byte 
+  //0x1F20,                 //RegPreambleDet  Disable 
+  0x2500,                   //RegPreambleMsb  
+  0x2606,                   //RegPreambleLsb  6Byte Preamble
+  0x2792,                   //RegSyncConfig Sync 2+1=3bytes
+  0x2800+0xAA,              //SyncWord = aa2dd4
+  0x2900+0x2D,              //
+  0x2A00+0xD4,              //
+  0x3000,                   //RegPacketConfig1  Disable CRC£¬NRZ
+  0x3140,                   //RegPacketConfig2  Packet Mode
+  0x3215,                   //RegPayloadLength  21bytes Fixed
+  0x3595,                   //RegFiFoThresh   21bytes                        
+};
+
+const u16 RFM98FSKRateTbl[4][2] = 
+{
+  {0x0268, 0x032B},         //BR=1.2Kbps
+  {0x0234, 0x0315},         //BR=2.4Kbps
+  {0x021A, 0x030B},         //BR=4.8Kbps
+  {0x020D, 0x0305},         //BR=9.6Kbps
+};
+
+const u16 RFM98RxTable[4] = 
+{       
+  0x090F,                   //RFIO Pin
+  0x400C,                   //DIO0 Mapping for IRQ / DIO2 for RxData
+  0x4100,                   //
+  0x4D84,                   //Normal and Rx   
+};
+                              
+const u16 RFM98TxTable[3] = 
+{
+  0x4000,                   //DIO0 Mapping for IRQ / DIO2 for RxData
+  0x4100,                   //          
+  0x4D87,                   //20dBm Tx
+};
+
+/**********************************************************
+**Name:     RFM98_ReadRSSI
+**Function: Read the RSSI value
+**Input:    none
+**Output:   temp, RSSI value
+**********************************************************/
+u8 RFM98_ReadRSSI(void)
+{
+  u8 temp=0xff;
+  temp=SPIRead(0x11);
+  temp>>=1;
+  temp=127-temp;                                           //127:Max RSSI
+  return temp;
+}
+
+/**********************************************************
+**Name:     RFM98_FskClearFIFO
+**Function: Change to RxMode from StandbyMode, can clear FIFO buffer
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_FskClearFIFO(void)
+{
+  SPIWrite(0x0101);                                        //Standby
+  SPIWrite(0x0105+0x08);                                   //entry RxMode
+}
+
+/**********************************************************
+**Name:     RFM98_FskEntryRx
+**Function: Set RFM69 entry FSK Rx_mode
+**Input:    None
+**Output:   "0" for Error Status
+**********************************************************/
+void RFM98_FskEntryRx(void)
+{
+  u8 i;
+  
+//   Input_RFData();
+    
+  RFM98_Config(1);  
+  for(i=0;i<2;i++)
+    SPIWrite(RFM98FSKRateTbl[gb_RateBuf_Addr][i]);         //setting rf rate parameter  
+  for(i=0;i<4;i++)                                         //Define to Rx mode 
+    SPIWrite(RFM98RxTable[i]);    
+  SPIWrite(0x0105+0x08);                                   //entry RxMode
+  
+  gb_SysTimer=3;                                        //System time = 3S
+  gb_StatusTx=0;                                           //Clear Tx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initial
+}
+/**********************************************************
+**Name:     RFM98_FSKRxWaitStable
+**Function: Determine whether the state of stable Rx in FSK mode
+**Input:    none
+**Output:   none
+**********************************************************/
+void RFM98_FSKRxWaitStable(void)
+{
+  if(gb_WaitStableFlag==0x0f)
+  {
+    if(gb_SysTimer!=0)
+    {
+      if((SPIRead(0x3E)&0xC0)==0xC0)
+      {
+        gb_WaitStableFlag=1;        
+      }
+    }
+    else
+    {
+      gb_ErrorFlag=1;
+      gb_WaitStableFlag=0;
+    }
+  }
+}
+
+/**********************************************************
+**Name:     RFM98_FskRxPacket
+**Function: Check for receive one packet
+**Input:    none
+**Output:   "!0"-----Receive one packet
+**          "0"------Nothing for receive
+**********************************************************/
+u8 RFM98_FskRxPacket(void)
+{
+  u8 i; 
+  
+  RFM98_FSKRxWaitStable();  
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    gb_StatusRx=1;                                         //Rx state stable
+  }       
+ 
+  if((nIRQ0) && (gb_StatusRx==1))
+  { 
+    for(i=0;i<32;i++) 
+      gb_RxData[i] = 0x00;  
+    
+    SPIBurstRead(0x00, gb_RxData, 21);  
+    RFM98_FskClearFIFO();
+    for(i=0;i<17;i++)
+    {
+      if(gb_RxData[i]!=RFM98Data[i])
+        break;  
+    }
+    if(i>=17) 
+      return 1;                                           //Rx success
+    else
+      return 0;
+  }
+  else
+    return 0;  
+}
+
+/**********************************************************
+**Name:     RFM98_FskEntryTx
+**Function: Set RFM98 entry FSK Tx_mode
+**Input:    None
+**Output:   "0" for Error Status
+**********************************************************/
+void RFM98_FskEntryTx(void)
+{
+  u8 i;
+  
+  RFM98_Config(1);
+  for(i=0;i<2;i++)
+    SPIWrite(RFM98FSKRateTbl[gb_RateBuf_Addr][i]);         //setting rf rate parameter  
+  for(i=0;i<3;i++)                                         //Define to Tx mode 
+    SPIWrite(RFM98TxTable[i]);
+  SPIWrite(0x0103+0x08);
+      
+  gb_SysTimer=3;                                        //System time = 3S
+  gb_StatusRx=0;                                           //Clear Rx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initial
+}
+
+/**********************************************************
+**Name:     RFM98_FSKTxWaitStable
+**Function: Determine whether the state of stable Tx
+**Input:    none
+**Output:   none
+**********************************************************/
+void RFM98_FSKTxWaitStable(void)
+{ 
+  if(gb_WaitStableFlag==0x0f) 
+  {
+    if(gb_SysTimer!=0)
+    {
+      if((SPIRead(0x3E)&0xA0)==0xA0)
+      {
+        gb_WaitStableFlag=1; 
+      }
+    }
+    else
+    {
+      gb_ErrorFlag=1;
+      gb_WaitStableFlag=0;
+    }
+  }
+}
+
+/**********************************************************
+**Name:     RFM98_FskTxPacket
+**Function: Check RFM98 send over & send next packet
+**Input:    none
+**Output:   TxFlag=1, Send success
+**********************************************************/
+u8 RFM98_FskTxPacket(void)
+{
+  u8 TxFlag=0;
+  
+  RFM98_FSKTxWaitStable();
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    if(gb_StatusTx==0)                                     //First entry Tx mode
+    {
+      gb_StatusTx=1;                                       //Tx state stable                     
+      gw_TxTimer=gw_RF_SentInterval;                       //Send time interval          
+      BurstWrite(0x00, (u8 *)RFM98Data, 21);          
+      TxFlag=1;
+      gb_WaitStableFlag=3;
+    }
+  }
+  if(gb_StatusTx==1)
+  {
+    if(gb_WaitStableFlag==3 && nIRQ0)                      //Packet send over
+    {     
+      gb_WaitStableFlag=0;
+      RFM98_Standby();                                     //Entry Standby mode      
+    }  
+    if(gw_TxTimer==0)                                      //It's time to Sending
+    {
+      gw_TxTimer=gw_RF_SentInterval;                       //Send time interval
+      gb_SysTimer=3;
+      gb_WaitStableFlag=0x0f;                              //Promised to call mode stable decide
+      
+      SPIWrite(0x0103+0x08);                               //Entry Tx mode
+    } 
+    if(gb_WaitStableFlag==2)                               //It's time to Sending
+    {
+      BurstWrite(0x00, (u8 *)RFM98Data, 21);
+      TxFlag=1;
+      gb_WaitStableFlag=3;                                 //Promised to call mode stable decide
+    }
+  }
+  return TxFlag;
+}
+
+/**********************************************************
+**Name:     RFM98_Config
+**Function: RFM98 base config
+**Input:    mode
+**Output:   None
+**********************************************************/
+void RFM98_Config(u8 mode)
+{
+  u8 i; 
+    
+  PORTC&=~(1<<5);                                       //Ver1.1 (Change for Reset)
+  for(i=200;i>0;i--) asm("NOP");                           //Delay   
+  PORTC|=(1<<5); 
+  for(i=200;i>0;i--) asm("NOP");                           //Delay     
+  for(gb_SysTimer=1;gb_SysTimer>0;);                 //waitting >10ms
+//   _delay_ms(200);
+  RFM98_Sleep();                                           //Change modem mode Must in Sleep mode 
+  for(i=250;i>0;i--)                                      //Delay
+    asm("NOP");  
+  if(!mode)
+  {
+    RFM98_EntryLoRa();  
+    //SPIWrite(0x5904);   //?? Change digital regulator form 1.6V to 1.47V: see errata note
+    
+    for(i=0;i<3;i++)                                       //setting frequency parameter
+    {
+      SPIWrite(RFM98FreqTbl[gb_FreqBuf_Addr][i]);  
+    }
+	
+    //setting base parameter 
+    SPIWrite(RFM98PowerTbl[gb_PowerBuf_Addr]);             //Setting output power parameter  
+    SPIWrite(LR_RegOcp+0x0B);                              //RegOcp,Close Ocp
+    SPIWrite(LR_RegLna+0x23);                              //RegLNA,High & LNA Enable
+    
+    if(RFM98SpreadFactorTbl[gb_RateBuf_Addr]==6)           //SFactor=6
+    {
+      u8 tmp;
+      SPIWrite(LR_RegModemConfig1+(RFM98LoRaBwTbl[gb_BandBuf_Addr]<<4)+(CR<<1)+0x01);//Implicit Enable CRC Enable(0x02) & Error Coding rate 4/5(0x01), 4/6(0x02), 4/7(0x03), 4/8(0x04)
+      SPIWrite(LR_RegModemConfig2+(RFM98SpreadFactorTbl[gb_RateBuf_Addr]<<4)+(CRC<<2)+0x03);
+      
+      tmp = SPIRead(0x31);
+      tmp &= 0xF8;
+      tmp |= 0x05;
+      SPIWrite(0x3100+tmp);
+      SPIWrite(0x3700+0x0C);
+    } 
+    else
+    {
+      SPIWrite(LR_RegModemConfig1+(RFM98LoRaBwTbl[gb_BandBuf_Addr]<<4)+(CR<<1)+0x00);//Explicit Enable CRC Enable(0x02) & Error Coding rate 4/5(0x01), 4/6(0x02), 4/7(0x03), 4/8(0x04)
+      SPIWrite(LR_RegModemConfig2+(RFM98SpreadFactorTbl[gb_RateBuf_Addr]<<4)+(CRC<<2)+0x03);  //SFactor &  LNA gain set by the internal AGC loop 
+    }
+    SPIWrite(LR_RegSymbTimeoutLsb+0xFF);                   //RegSymbTimeoutLsb Timeout = 0x3FF(Max) 
+    
+    SPIWrite(LR_RegPreambleMsb + 0);                       //RegPreambleMsb 
+    SPIWrite(LR_RegPreambleLsb + 12);                      //RegPreambleLsb 8+4=12byte Preamble
+    
+    SPIWrite(REG_LR_DIOMAPPING2+0x01);                     //RegDioMapping2 DIO5=00, DIO4=01
+  
+  }
+  else
+  {
+    for(i=0;i<3;i++)                                       //setting frequency parameter
+    {
+      SPIWrite(RFM98FreqTbl[gb_FreqBuf_Addr][i]);  
+    }
+    SPIWrite(RFM98PowerTbl[gb_PowerBuf_Addr]);             //Setting output power parameter
+    
+    for(i=0;i<16;i++)                                      //setting base parameter
+      SPIWrite(RFM98ConfigTbl[i]);
+  }
+  RFM98_Standby();                                         //Entry standby mode
+}
+
+///////////////////////////////////////////////// Test mode //////////////////////////////////////////////////
+const u16 RFM98TestConfigTbl[9] = 
+{
+  0x0402,                   //RegFdevMsb  35KHz 
+  0x053D,                   //RegFdevLsb
+  0x0B0B,                   //RegOcp  Close Ocp
+  0x0C20,                   //RegLNA  High & LNA Disable
+  //0x0C23,                 //RegLNA  High & LNA Enable
+  0x1212,                   //RegRxBw 83KHz
+  0x1FA0,                   //RegPreambleDet  Enable 2Byte 
+  //0x1F20,                 //RegPreambleDet  Disable 
+  0x2500,                   //RegPreambleMsb  
+  0x2600,                   //RegPreambleLsb  0Byte Preamble
+  0x3100,                   //RegPacketConfig2  Continuous Mode
+};
+
+void RFM98_TestConfig(void)
+{
+  u8 i;
+  
+  PORTC&=~(1<<5);                                       //Ver1.1 (Change for Reset)
+  for(i=200;i!=0;i--)                                      //Delay
+    asm("NOP"); 
+  PORTC|=(1<<5); 
+  for(i=200;i!=0;i--)                                      //Delay
+    asm("NOP");  
+  for(gb_SysTimer=1;gb_SysTimer>0;);                 //waitting >5ms
+    
+  RFM98_Sleep();                                           //Change modem mode Must in Sleep mode 
+  for(i=250;i!=0;i--)                                      //Delay
+    asm("NOP");  
+
+  for(i=0;i<3;i++)                                         //setting frequency parameter
+  {
+    SPIWrite(RFM98FreqTbl[gb_FreqBuf_Addr][i]);  
+  }
+  for(i=0;i<2;i++)
+    SPIWrite(RFM98FSKRateTbl[gb_RateBuf_Addr][i]);         //setting rf rate parameter
+    
+  SPIWrite(RFM98PowerTbl[gb_PowerBuf_Addr]);               //Setting output power parameter
+  
+  
+  for(i=0;i<9;i++)                                         //setting base parameter 
+    SPIWrite(RFM98TestConfigTbl[i]);
+  RFM98_Standby();  
+}
+
+/**********************************************************
+**Name:     RFM98_EntryTestTx
+**Function: Set RFM98 entry Tx test mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_EntryTestTx(void)
+{
+  u8 i;
+  
+//   Output_RFData();                                         //DIO2=0                                 
+//   RFData=0;
+  RFM98_TestConfig();
+  for(i=0;i<3;i++)                                         //Define to Tx mode  
+    SPIWrite(RFM98TxTable[i]);
+  SPIWrite(0x0100+0x20+0x08+0x03);
+      
+  gb_SysTimer=3;                                        //System time = 3S
+  gb_StatusRx=0;                                           //Clear Rx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initial
+}
+
+void RFM98_TestTx(void)
+{ 
+  RFM98_FSKTxWaitStable();
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    gb_StatusTx=1;
+    
+//     RFData=1;                                              //DIO2=1    
+  }
+}
+
+/**********************************************************
+**Name:     RFM98_EntryTestRx
+**Function: Set RFM98 entry Rx test mode
+**Input:    None
+**Output:   None
+**********************************************************/
+void RFM98_EntryTestRx(void)
+{
+  u8 i;
+//   Input_RFData(); 
+  RFM98_TestConfig();
+  for(i=0;i<4;i++)                                         //Define to Rx mode 
+    SPIWrite(RFM98RxTable[i]);
+  SPIWrite(0x0105+0x08);
+  
+  gb_SysTimer=3;                                        //System time = 3S
+  gb_StatusTx=0;                                           //Clear Tx status flag 
+  gb_WaitStableFlag=0x0f;                                  //State stable flag initial
+}
+
+void RFM98_TestRx(void)
+{   
+  RFM98_FSKRxWaitStable();
+  if(gb_WaitStableFlag==1)
+  {
+    gb_WaitStableFlag=2;
+    gb_StatusRx=1;  
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+u8 gb_WorkmodeBackup=0;
+/**********************************************************
+**Name:     RFM98_Running
+**Function: RFM98 running function
+**Input:    mode, work mode(Lo-T,Lo-R,FS-T,FS-R,T-T,T-R)
+            WorkStatus, work status(LoRa,FSK,standby,sleep)
+            ParaChangeFlag, Parameter changed when ParaChangeFlag=1
+            *TxFlag, Tx success flag affect Tx count
+            *RxFlag, Rx success flag affect Rx count
+            *RSSI, RSSI value
+**Output:   none
+**********************************************************/
+void RFM98_Running(u8 mode,u8 WorkStatus,u8 ParaChangeFlag,u8 *TxFlag,u8 *RxFlag,u8 *RSSI)
+{ 
+  u8 temp;
+    
+  if(WorkStatus==C_ModuleWorkMode_LoRa)                    //LoRa modem mode
+  {
+    switch(mode)
+    {
+      case C_SysMode_LoRaTx:                               //Normal send mode(Abbreviation:Lo-T)
+		if(ParaChangeFlag==1)                              //Parament changed
+        {
+		  RFM98_LoRaEntryTx();
+        }
+        temp=RFM98_LoRaTxPacket(); 
+        if(temp==1){*TxFlag=1;}
+        break;
+      case C_SysMode_LoRaRx:                               //Normal receive mode(Abbreviation:Lo-R)      
+		if(ParaChangeFlag==1)
+        {           
+          RFM98_LoRaEntryRx();
+        }
+        temp=RFM98_LoRaRxPacket(); 
+        if(temp==1){*RxFlag=1;}
+        *RSSI=RFM98_LoRaReadRSSI();                        //Read RSSI
+        break;
+    } 
+  }
+  else if(WorkStatus==C_ModuleWorkMode_FSK)                //FSK modem mode
+  {
+    switch(mode)
+    {
+      case C_SysMode_FSKTx:                                //Normal send mode(Abbreviation:FS-T)
+        if(ParaChangeFlag==1)                              //Parament changed
+        {                   
+          RFM98_FskEntryTx();
+        }         
+        temp=RFM98_FskTxPacket(); 
+        if(temp==1){*TxFlag=1;}
+        break;
+      case C_SysMode_FSKRx:                                //Normal receive mode(Abbreviation:FS-R)      
+        if(ParaChangeFlag==1)
+        {           
+          RFM98_FskEntryRx();
+        }
+        temp=RFM98_FskRxPacket(); 
+        if(temp==1){*RxFlag=1;}
+        *RSSI=RFM98_ReadRSSI();                            //Read RSSI
+        break;     
+    } 
+  }
+  else if(WorkStatus==C_ModuleWorkMode_Standby)            //Standby status
+  {
+    if(gb_WorkmodeBackup!=C_ModuleWorkMode_Standby)
+      RFM98_Standby();
+  }
+  else if(WorkStatus==C_ModuleWorkMode_Sleep)              //Sleep status
+  {
+    if(gb_WorkmodeBackup!=C_ModuleWorkMode_Sleep)
+      RFM98_Sleep();
+  }
+  if(WorkStatus==C_ModuleWorkMode_LoRa || WorkStatus==C_ModuleWorkMode_FSK)
+  {
+    if(mode==C_SysMode_TestTx)
+    {
+      if(ParaChangeFlag==1)
+      {           
+        RFM98_EntryTestTx();
+      }
+      RFM98_TestTx();
+    }
+    else if(mode==C_SysMode_TestRx)
+    {
+      if(ParaChangeFlag==1)
+      {       
+        RFM98_EntryTestRx();
+      }
+      RFM98_TestRx();
+      
+      *RSSI=RFM98_ReadRSSI();                              //Read RSSI
+    }
+  }
+  gb_WorkmodeBackup=WorkStatus;
+}
+void RFM_RequestToSend(void)
+{
+	Tx_request = 1;
+}
+
+void RFM_CheckStatus(void)
+{
+	if(gb_ParameterChangeFlag==1){gb_ParameterChangeFlag=0;}    //clear parameter flag
+	if(gb_ModuleWorkMode!=C_ModuleWorkMode_FSK && gb_ModuleWorkMode!=C_ModuleWorkMode_OOK
+	&& gb_ModuleWorkMode!=C_ModuleWorkMode_LoRa)
+	{
+		gb_StatusTx=0;
+		gb_StatusRx=0;
+	}
+}
+
+void RFM_SwitchModeCheck(u8 *TxFlag,u8 *RxFlag)
+{
+	if ((Tx_request)&&(gb_SystemMode==C_SysMode_LoRaRx)&&(gb_ParameterChangeFlag==0))
+	{
+		gb_SystemMode=C_SysMode_LoRaTx;
+		gb_ParameterChangeFlag=1;
+	}
+	if ((gb_SysTimer==0)&&(gb_SystemMode==C_SysMode_LoRaTx)&&(gb_ParameterChangeFlag==0))
+	{
+		gb_SystemMode=C_SysMode_LoRaRx;
+		gb_ParameterChangeFlag=1;
+	}
+	if(*TxFlag==1)                                        //Sent successfully
+	{
+		*TxFlag=0;
+		Tx_request=0;
+		gb_SysTimer=3;
+		gw_SendDataCount++;
+		if(gw_SendDataCount>9999){gw_SendDataCount=0;}
+	}
+	if(*RxFlag==1)                                        //Successfully received
+	{
+		*RxFlag=0;
+		gw_ReceiveDataCount++;
+		if(gw_ReceiveDataCount>9999){gw_ReceiveDataCount=0;}
+	}
+}
+
+void Init_RFM(void)
+{
+	ModuleSelectModeEntryCheck();
+	gb_ModuleWorkMode=C_ModuleWorkMode_LoRa;
+	gb_SystemMode=C_SysMode_LoRaRx;//C_SysMode_LoRaRx;//
+	gb_ModuleWorkEnableFlag=1;
+	gb_ParameterChangeFlag = 1;
+}
+
