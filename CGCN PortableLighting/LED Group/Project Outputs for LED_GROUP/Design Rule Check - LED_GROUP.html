@@ -1,0 +1,485 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html">
+<style type="text/css">
+		h1, h2, h3, h4, h5, h6 {
+			font-family : segoe ui;
+			color : black;
+			background-color : #EDE7D9;
+			padding: 0.3em;
+		}
+
+		h1 {
+			font-size: 1.2em;
+		}		
+
+		h2 {
+			font-size: 1.2em;
+		}
+
+		body {
+			font-family : segoe ui;
+		}
+
+		td, th {
+			padding: 0.5em;
+			text-align : left;
+			width: 10em;
+		}
+		th {
+			background-color : #EEEEEE;
+
+		}
+		th.column1, td.column1 {
+			text-align: left;
+			width : auto;
+		}
+		table {
+			width : 100%;
+			font-size: 0.9em;
+		}
+
+		.DRC_summary_header {
+			padding-bottom : 0.1em;
+			border : 0px solid black;
+			width: 100%;
+			align: left;
+		}
+
+		.DRC_summary_header_col1,
+		.DRC_summary_header_col2, 
+		.DRC_summary_header_col3 {
+			color : black;
+			font-size:100%;
+			padding : 0em;
+			padding-top : 0.2em;
+			padding-bottom 0.2em;
+			border : 0px solid black;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.DRC_summary_header_col1 {
+			font-weight: bold;
+			width: 8em;
+		}
+
+		.DRC_summary_header_col2 {
+			width: 0.1em;
+		
+		}
+
+		.DRC_summary_header_col3 {
+			width : auto;
+		}
+
+		.header_holder {
+		    Width = 100%;
+		    border = 0px solid green;
+		    padding = 0;
+		}
+
+
+		.front_matter, .front_matter_column1, .front_matter_column2, .front_matter_column3
+		{
+			left : 0;
+			top : 0;
+			padding: 0em;
+			padding-top : 0.1em;
+			border : 0px solid black;
+			width : 100%;
+			vertical-align: top;
+			text-align: left;
+		}
+
+		.front_matter_column1 {
+			width : 8em;
+			font-weight: bold;
+		}
+
+		.front_matter_column2 {
+			width: 0.1em;
+		}
+
+		.front_matter_column3 {
+			width : auto;
+		}
+
+		.total_column1, .total_column {
+			font-weight : bold;
+		}
+		.total_column1 {
+			text-align : left;
+		}
+		.warning, .error {
+			color : red;
+			font-weight : bold;
+		}
+		tr.onmouseout_odd {
+			background-color : #white;
+		}
+		tr.onmouseout_even { 
+			background-color : #FAFAFA;
+		}
+		tr.onmouseover_odd, tr.onmouseover_even { 
+			background-color : #EEEEEE;
+		} 
+		a:link, a:visited, .q a:link,.q a:active,.q {
+			color: #21489e; 
+		}
+		a:link.callback, a:visited.callback { 
+			color: #21489e;
+		}
+		a:link.customize, a:visited.customize {
+			color: #C0C0C0;
+			position: absolute; 
+			right: 10px;
+		}	
+		p.contents_level1 {
+			font-weight : bold;
+			font-size : 110%;
+			margin : 0.5em;
+		}
+		p.contents_level2 {
+			position : relative;
+			left : 20px;
+			margin : 0.5em;
+		}
+	</style><script type="text/javascript">
+		function coordToMils(coord) {
+			var number = coord / 10000;
+			
+			if (number != number.toFixed(3))
+				number = number.toFixed(3);
+
+			return number + 'mil'
+		}
+
+		function coordToMM(coord) {
+			var number = 0.0254 * coord / 10000;
+			
+			if (number != number.toFixed(4))
+				number = number.toFixed(4);
+			
+			return number + 'mm'
+		}
+	
+		function convertCoord(coordNode, units) {
+			for (var i = 0; i < coordNode.childNodes.length; i++) {
+				coordNode.removeChild(coordNode.childNodes[i]);
+			}
+
+			var coord = coordNode.getAttribute('value');
+			if (coord != null) {
+				if (units == 'mm') {
+					textNode = document.createTextNode(coordToMM(coord));
+					coordNode.appendChild(textNode);
+				} else if (units == 'mil') {
+					textNode = document.createTextNode(coordToMils(coord));		
+					coordNode.appendChild(textNode);	
+				}
+			}
+		}
+	
+		function convertUnits(unitNode, units) {
+			for (var i = 0; i < unitNode.childNodes.length; i++) {
+				unitNode.removeChild(unitNode.childNodes[i]);		
+			}
+		
+			textNode = document.createTextNode(units); 
+			unitNode.appendChild(textNode);
+		}
+	
+		function changeUnits(radio_input, units) {
+			if (radio_input.checked) {
+			
+				var elements = document.getElementsByName('coordinate');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertCoord(elements[i], units);
+					}
+				}
+	
+				var elements = document.getElementsByName('units');
+				if (elements) {
+					for (var i = 0; i < elements.length; i++) {
+						convertUnits(elements[i], units);
+					}
+				}
+			}
+		}
+	</script><title>Design Rule Verification Report</title>
+</head>
+<body onload=""><img ALT="Altium" src="
+			file://C:\Users\Public\Documents\Altium\AD18\Templates\AD_logo.png
+		"><h1>Design Rule Verification Report</h1>
+<table class="header_holder">
+<td class="column1">
+<table class="front_matter">
+<tr class="front_matter">
+<td class="front_matter_column1">Date:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">11/8/2018</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">11:33:25 AM</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Elapsed Time:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3">00:00:01</td>
+</tr>
+<tr class="front_matter">
+<td class="front_matter_column1">Filename:</td>
+<td class="front_matter_column2"></td>
+<td class="front_matter_column3"><a href="file:///C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc" class="file"><acronym title="C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc">C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc</acronym></a></td>
+</tr>
+</table>
+</td>
+<td class="column2">
+<table class="DRC_summary_header">
+<tr>
+<td class="DRC_summary_header_col1">Warnings:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3">0</td></tr>
+<tr>
+<td class="DRC_summary_header_col1">Rule Violations:</td>
+<td class="DRC_summary_header_col2"></td>
+<td class="DRC_summary_header_col3" style="color : red">47</td></tr>
+</table>
+</td>
+</table><a name="IDOZ1S43KOHKU5BL423VPR2NBA4BOU3WQLJSZR5YJGR142YDWFBNOH"><h2>Summary</h2></a><table>
+<tr>
+<th class="column1">Warnings</th>
+<th class="column2">Count</th>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">0</td>
+</tr>
+</table><br><table>
+<tr>
+<th class="column1">Rule Violations</th>
+<th class="column2">Count</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDZ1PVHLPTJLOYF1E35LTCQXXVSNT5UK3DGIMIVSIB3VY4YH44UABG">Clearance Constraint (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">2</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDST534FEBHVQDUSTG3IZ2XBE0OKTXFMKF4P34TKLPYM3DOMHF0UG">Short-Circuit Constraint (Allowed=No) (All),(All)</a></td>
+<td class="column2">2</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#ID4F2MFO01WKBPEJ2QXEXU24VQYKY2ID0PEOYF4EP3DEUQEBXBC3NB">Un-Routed Net Constraint ( (All) )</a></td>
+<td class="column2">3</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#ID0AXL2DE335G5HVPGGWQAMMMHFLVHIJECYK2SIBFNECTMIUBJSTBF">Modified Polygon (Allow modified: No), (Allow shelved: No)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDA330O1NPTDDKLH22TQRCLXTNM0OHC3QVMUYOYF24VDXNRVKNCRL">Width Constraint (Min=0.254mm) (Max=2mm) (Preferred=0.254mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDVSPDA3UJOXCGCBZJQIJYIVDS4BRYLJ3ZOPLH2HFZY0E3DLIXRQ0L">Power Plane Connect Rule(Relief Connect )(Expansion=0.508mm) (Conductor Width=0.254mm) (Air Gap=0.254mm) (Entries=4) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDDTQIY51FJBZBLJHDHYZJBJJXWGAL2VGEFSCMD3DYLOPTBC0LX4YD">Hole Size Constraint (Min=0.025mm) (Max=2.54mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDJCHGPTXY434TCGKM2I1MQBW5TDJZGPZ3OUKXIEOQOBJPNN2M2API">Hole To Hole Clearance (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDE05PDR5CIIIECB5MSB3DZPAHXM0PRXFHVBIOJRE3BTXERLPEKMNP">Minimum Solder Mask Sliver (Gap=0.254mm) (All),(All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDLUKZLDG2U3ROKIFKI5OHONDRYFQDZRY0AE0CUXNFHJUGK4EWI3MD">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</a></td>
+<td class="column2">32</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDHN4XXY4QNVN4LDYSVKGEXOPDUFUYCHISH1W23MICU4XT5P1IY3H">Silk to Silk (Clearance=0.254mm) (All),(All)</a></td>
+<td class="column2">8</td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="#IDGNYUW3C3D35FDYVKGSYXNK4TZBRY2GO4D0UVZ1FWURORZWM52FXK">Net Antennae (Tolerance=0mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="#IDDZNLN4R1BNE2BOEOK3JJ3D5IUH2KKXNIQN2MQ4MZ4K2X5MVF0U5G">Height Constraint (Min=0mm) (Max=25.4mm) (Prefered=12.7mm) (All)</a></td>
+<td class="column2">0</td>
+</tr>
+<tr>
+<td style="font-weight : bold; text-align : right" class="column1">Total</td>
+<td style="font-weight : bold" class="column2">47</td>
+</tr>
+</table><br><a name="IDZ1PVHLPTJLOYF1E35LTCQXXVSNT5UK3DGIMIVSIB3VY4YH44UABG"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Clearance Constraint (Gap=0.254mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2998.691mil|Location2.X=3006.358mil|Location1.Y=1748.755mil|Location2.Y=1756.422mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2998.691mil|Location2.X=3006.358mil|Location1.Y=1748.755mil|Location2.Y=1756.422mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.254mm) Between Arc (0mm,0mm) on Bottom Layer And Arc (-16.895mm,7.743mm) on Bottom Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.666mil|Location2.X=2975.333mil|Location1.Y=1754.883mil|Location2.Y=1762.55mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.666mil|Location2.X=2975.333mil|Location1.Y=1754.883mil|Location2.Y=1762.55mil|Absolute=True">Clearance Constraint: (Collision &lt; 0.254mm) Between Arc (0mm,0mm) on Bottom Layer And Via (-20.574mm,4.064mm) from Top Layer to Bottom Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDST534FEBHVQDUSTG3IZ2XBE0OKTXFMKF4P34TKLPYM3DOMHF0UG"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Short-Circuit Constraint (Allowed=No) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2896.759mil|Location2.X=3036.173mil|Location1.Y=1675.245mil|Location2.Y=1814.659mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2896.759mil|Location2.X=3036.173mil|Location1.Y=1675.245mil|Location2.Y=1814.659mil|Absolute=True">Short-Circuit Constraint: Between Arc (0mm,0mm) on Bottom Layer And Arc (-16.895mm,7.743mm) on Bottom Layer Location : [X = 75.348mm][Y = 44.322mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2927.974mil|Location2.X=3002.026mil|Location1.Y=1722.974mil|Location2.Y=1797.026mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2927.974mil|Location2.X=3002.026mil|Location1.Y=1722.974mil|Location2.Y=1797.026mil|Absolute=True">Short-Circuit Constraint: Between Arc (0mm,0mm) on Bottom Layer And Via (-20.574mm,4.064mm) from Top Layer to Bottom Layer Location : [X = 75.311mm][Y = 44.704mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="ID4F2MFO01WKBPEJ2QXEXU24VQYKY2ID0PEOYF4EP3DEUQEBXBC3NB"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Un-Routed Net Constraint ( (All) )</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3231mil|Location2.X=3574.271mil|Location1.Y=721.907mil|Location2.Y=1744mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3231mil|Location2.X=3574.271mil|Location1.Y=721.907mil|Location2.Y=1744mil|Absolute=True">Un-Routed Net Constraint: Net LEFT_CONTROL Between Pad P1-2(-12.7mm,2.54mm) on Multi-Layer And Pad L3-K(-6.899mm,-20.022mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3231mil|Location2.X=4652.093mil|Location1.Y=1255.505mil|Location2.Y=1544mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3231mil|Location2.X=4652.093mil|Location1.Y=1255.505mil|Location2.Y=1544mil|Absolute=True">Un-Routed Net Constraint: Net RIGHT_CONTROL Between Pad P1-4(-12.7mm,-2.54mm) on Multi-Layer And Pad R3-K(19.997mm,-6.95mm) on Top Layer </acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3975.729mil|Location2.X=4652.093mil|Location1.Y=1255.505mil|Location2.Y=2478.093mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3975.729mil|Location2.X=4652.093mil|Location1.Y=1255.505mil|Location2.Y=2478.093mil|Absolute=True">Un-Routed Net Constraint: Net RIGHT_CONTROL Between Pad R1-K(6.899mm,20.022mm) on Top Layer And Pad R3-K(19.997mm,-6.95mm) on Top Layer </acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDLUKZLDG2U3ROKIFKI5OHONDRYFQDZRY0AE0CUXNFHJUGK4EWI3MD"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk To Solder Mask (Clearance=0.1mm) (IsPad),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3077.545mil|Location2.X=3084.235mil|Location1.Y=1895.272mil|Location2.Y=1902.78mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3077.545mil|Location2.X=3084.235mil|Location1.Y=1895.272mil|Location2.Y=1902.78mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L1-A(-19.05mm,9.246mm) on Top Layer And Track (-18.631mm,4.948mm)(-16.687mm,9.641mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.268mil|Location2.X=2973.958mil|Location1.Y=2027.541mil|Location2.Y=2035.05mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.268mil|Location2.X=2973.958mil|Location1.Y=2027.541mil|Location2.Y=2035.05mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L1-A(-19.05mm,9.246mm) on Top Layer And Track (-22.385mm,6.503mm)(-20.441mm,11.197mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3069.891mil|Location2.X=3076.581mil|Location1.Y=1876.794mil|Location2.Y=1884.302mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3069.891mil|Location2.X=3076.581mil|Location1.Y=1876.794mil|Location2.Y=1884.302mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L1-K(-20.022mm,6.899mm) on Top Layer And Track (-18.631mm,4.948mm)(-16.687mm,9.641mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2929mil|Location2.X=2935.689mil|Location1.Y=1935.153mil|Location2.Y=1942.661mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2929mil|Location2.X=2935.689mil|Location1.Y=1935.153mil|Location2.Y=1942.661mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L1-K(-20.022mm,6.899mm) on Top Layer And Track (-22.385mm,6.503mm)(-20.441mm,11.197mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3507.57mil|Location2.X=3515.04mil|Location1.Y=2471.428mil|Location2.Y=2478.21mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3507.57mil|Location2.X=3515.04mil|Location1.Y=2471.428mil|Location2.Y=2478.21mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L2-A(-6.924mm,20.022mm) on Top Layer And Track (-11.222mm,20.441mm)(-6.529mm,22.385mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3492.019mil|Location2.X=3499.489mil|Location1.Y=2299.922mil|Location2.Y=2306.704mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3492.019mil|Location2.X=3499.489mil|Location1.Y=2299.922mil|Location2.Y=2306.704mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L2-A(-6.924mm,20.022mm) on Top Layer And Track (-9.667mm,16.687mm)(-4.973mm,18.631mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3415.182mil|Location2.X=3422.652mil|Location1.Y=2433.16mil|Location2.Y=2439.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3415.182mil|Location2.X=3422.652mil|Location1.Y=2433.16mil|Location2.Y=2439.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L2-K(-9.271mm,19.05mm) on Top Layer And Track (-11.222mm,20.441mm)(-6.529mm,22.385mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3399.631mil|Location2.X=3407.101mil|Location1.Y=2261.653mil|Location2.Y=2268.435mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3399.631mil|Location2.X=3407.101mil|Location1.Y=2261.653mil|Location2.Y=2268.435mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L2-K(-9.271mm,19.05mm) on Top Layer And Track (-9.667mm,16.687mm)(-4.973mm,18.631mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3416.182mil|Location2.X=3423.69mil|Location1.Y=760.151mil|Location2.Y=766.84mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3416.182mil|Location2.X=3423.69mil|Location1.Y=760.151mil|Location2.Y=766.84mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L3-A(-9.246mm,-19.05mm) on Top Layer And Track (-11.197mm,-20.441mm)(-6.503mm,-22.385mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3400.631mil|Location2.X=3408.139mil|Location1.Y=931.657mil|Location2.Y=938.347mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3400.631mil|Location2.X=3408.139mil|Location1.Y=931.657mil|Location2.Y=938.347mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L3-A(-9.246mm,-19.05mm) on Top Layer And Track (-9.641mm,-16.687mm)(-4.948mm,-18.631mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3508.57mil|Location2.X=3516.078mil|Location1.Y=721.882mil|Location2.Y=728.572mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3508.57mil|Location2.X=3516.078mil|Location1.Y=721.882mil|Location2.Y=728.572mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L3-K(-6.899mm,-20.022mm) on Top Layer And Track (-11.197mm,-20.441mm)(-6.503mm,-22.385mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3493.019mil|Location2.X=3500.527mil|Location1.Y=893.389mil|Location2.Y=900.078mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3493.019mil|Location2.X=3500.527mil|Location1.Y=893.389mil|Location2.Y=900.078mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L3-K(-6.899mm,-20.022mm) on Top Layer And Track (-9.641mm,-16.687mm)(-4.948mm,-18.631mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3070.16mil|Location2.X=3076.942mil|Location1.Y=1314.348mil|Location2.Y=1321.818mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3070.16mil|Location2.X=3076.942mil|Location1.Y=1314.348mil|Location2.Y=1321.818mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L4-A(-20.015mm,-6.934mm) on Top Layer And Track (-18.624mm,-4.983mm)(-16.68mm,-9.677mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2929.268mil|Location2.X=2936.05mil|Location1.Y=1255.989mil|Location2.Y=1263.459mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2929.268mil|Location2.X=2936.05mil|Location1.Y=1255.989mil|Location2.Y=1263.459mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L4-A(-20.015mm,-6.934mm) on Top Layer And Track (-22.379mm,-6.538mm)(-20.434mm,-11.232mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3077.813mil|Location2.X=3084.595mil|Location1.Y=1295.87mil|Location2.Y=1303.34mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3077.813mil|Location2.X=3084.595mil|Location1.Y=1295.87mil|Location2.Y=1303.34mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L4-K(-19.043mm,-9.281mm) on Top Layer And Track (-18.624mm,-4.983mm)(-16.68mm,-9.677mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.536mil|Location2.X=2974.318mil|Location1.Y=1163.601mil|Location2.Y=1171.071mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=2967.536mil|Location2.X=2974.318mil|Location1.Y=1163.601mil|Location2.Y=1171.071mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad L4-K(-19.043mm,-9.281mm) on Top Layer And Track (-22.379mm,-6.538mm)(-20.434mm,-11.232mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4144.182mil|Location2.X=4151.69mil|Location1.Y=2260.151mil|Location2.Y=2266.84mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4144.182mil|Location2.X=4151.69mil|Location1.Y=2260.151mil|Location2.Y=2266.84mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R1-A(9.246mm,19.05mm) on Top Layer And Track (4.948mm,18.631mm)(9.641mm,16.687mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4128.631mil|Location2.X=4136.139mil|Location1.Y=2431.657mil|Location2.Y=2438.347mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4128.631mil|Location2.X=4136.139mil|Location1.Y=2431.657mil|Location2.Y=2438.347mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R1-A(9.246mm,19.05mm) on Top Layer And Track (6.503mm,22.385mm)(11.197mm,20.441mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4051.794mil|Location2.X=4059.302mil|Location1.Y=2298.419mil|Location2.Y=2305.109mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4051.794mil|Location2.X=4059.302mil|Location1.Y=2298.419mil|Location2.Y=2305.109mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R1-K(6.899mm,20.022mm) on Top Layer And Track (4.948mm,18.631mm)(9.641mm,16.687mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4036.243mil|Location2.X=4043.751mil|Location1.Y=2469.925mil|Location2.Y=2476.615mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4036.243mil|Location2.X=4043.751mil|Location1.Y=2469.925mil|Location2.Y=2476.615mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R1-K(6.899mm,20.022mm) on Top Layer And Track (6.503mm,22.385mm)(11.197mm,20.441mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4505.268mil|Location2.X=4512.05mil|Location1.Y=1800.989mil|Location2.Y=1808.459mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4505.268mil|Location2.X=4512.05mil|Location1.Y=1800.989mil|Location2.Y=1808.459mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R2-A(20.015mm,6.909mm) on Top Layer And Track (16.68mm,9.651mm)(18.624mm,4.958mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4615.545mil|Location2.X=4622.327mil|Location1.Y=1933.258mil|Location2.Y=1940.728mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4615.545mil|Location2.X=4622.327mil|Location1.Y=1933.258mil|Location2.Y=1940.728mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R2-A(20.015mm,6.909mm) on Top Layer And Track (20.434mm,11.206mm)(22.379mm,6.513mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4467mil|Location2.X=4473.782mil|Location1.Y=1893.377mil|Location2.Y=1900.847mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4467mil|Location2.X=4473.782mil|Location1.Y=1893.377mil|Location2.Y=1900.847mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R2-K(19.043mm,9.255mm) on Top Layer And Track (16.68mm,9.651mm)(18.624mm,4.958mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4577.276mil|Location2.X=4584.059mil|Location1.Y=2025.646mil|Location2.Y=2033.116mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4577.276mil|Location2.X=4584.059mil|Location1.Y=2025.646mil|Location2.Y=2033.116mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R2-K(19.043mm,9.255mm) on Top Layer And Track (20.434mm,11.206mm)(22.379mm,6.513mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4466.268mil|Location2.X=4472.958mil|Location1.Y=1297.541mil|Location2.Y=1305.05mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4466.268mil|Location2.X=4472.958mil|Location1.Y=1297.541mil|Location2.Y=1305.05mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R3-A(19.025mm,-9.296mm) on Top Layer And Track (16.661mm,-9.692mm)(18.605mm,-4.999mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4607.16mil|Location2.X=4613.849mil|Location1.Y=1239.182mil|Location2.Y=1246.69mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4607.16mil|Location2.X=4613.849mil|Location1.Y=1239.182mil|Location2.Y=1246.69mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R3-A(19.025mm,-9.296mm) on Top Layer And Track (20.416mm,-11.247mm)(22.36mm,-6.554mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4504.536mil|Location2.X=4511.226mil|Location1.Y=1389.929mil|Location2.Y=1397.438mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4504.536mil|Location2.X=4511.226mil|Location1.Y=1389.929mil|Location2.Y=1397.438mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R3-K(19.997mm,-6.95mm) on Top Layer And Track (16.661mm,-9.692mm)(18.605mm,-4.999mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4614.813mil|Location2.X=4621.503mil|Location1.Y=1257.66mil|Location2.Y=1265.168mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4614.813mil|Location2.X=4621.503mil|Location1.Y=1257.66mil|Location2.Y=1265.168mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R3-K(19.997mm,-6.95mm) on Top Layer And Track (20.416mm,-11.247mm)(22.36mm,-6.554mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4053.182mil|Location2.X=4060.652mil|Location1.Y=895.16mil|Location2.Y=901.942mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4053.182mil|Location2.X=4060.652mil|Location1.Y=895.16mil|Location2.Y=901.942mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R4-A(6.934mm,-20.015mm) on Top Layer And Track (4.983mm,-18.624mm)(9.677mm,-16.68mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4037.631mil|Location2.X=4045.101mil|Location1.Y=723.653mil|Location2.Y=730.435mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4037.631mil|Location2.X=4045.101mil|Location1.Y=723.653mil|Location2.Y=730.435mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R4-A(6.934mm,-20.015mm) on Top Layer And Track (6.538mm,-22.379mm)(11.232mm,-20.434mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4145.57mil|Location2.X=4153.04mil|Location1.Y=933.428mil|Location2.Y=940.21mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4145.57mil|Location2.X=4153.04mil|Location1.Y=933.428mil|Location2.Y=940.21mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R4-K(9.281mm,-19.043mm) on Top Layer And Track (4.983mm,-18.624mm)(9.677mm,-16.68mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4130.019mil|Location2.X=4137.489mil|Location1.Y=761.922mil|Location2.Y=768.704mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4130.019mil|Location2.X=4137.489mil|Location1.Y=761.922mil|Location2.Y=768.704mil|Absolute=True">Silk To Solder Mask Clearance Constraint: (0.064mm &lt; 0.1mm) Between Pad R4-K(9.281mm,-19.043mm) on Top Layer And Track (6.538mm,-22.379mm)(11.232mm,-20.434mm) on Top Overlay [Top Overlay] to [Top Solder] clearance [0.064mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br><a name="IDHN4XXY4QNVN4LDYSVKGEXOPDUFUYCHISH1W23MICU4XT5P1IY3H"><table>
+<tr>
+<th style="text-align : left" colspan="1" class="rule">Silk to Silk (Clearance=0.254mm) (All),(All)</th>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4436.104mil|Location2.X=4447.354mil|Location1.Y=1257.041mil|Location2.Y=1270.334mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4436.104mil|Location2.X=4447.354mil|Location1.Y=1257.041mil|Location2.Y=1270.334mil|Absolute=True">Silk To Silk Clearance Constraint: (0.228mm &lt; 0.254mm) Between Text "A K" (16.747mm,-8.49mm) on Top Overlay And Track (16.661mm,-9.692mm)(18.605mm,-4.999mm) on Top Overlay Silk Text to Silk Clearance [0.228mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3101.646mil|Location2.X=3112.896mil|Location1.Y=1929.709mil|Location2.Y=1943.002mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3101.646mil|Location2.X=3112.896mil|Location1.Y=1929.709mil|Location2.Y=1943.002mil|Absolute=True">Silk To Silk Clearance Constraint: (0.228mm &lt; 0.254mm) Between Text "A K" (-16.772mm,8.44mm) on Top Overlay And Track (-18.631mm,4.948mm)(-16.687mm,9.641mm) on Top Overlay Silk Text to Silk Clearance [0.228mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4478.931mil|Location2.X=4490.181mil|Location1.Y=1826.466mil|Location2.Y=1839.72mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4478.931mil|Location2.X=4490.181mil|Location1.Y=1826.466mil|Location2.Y=1839.72mil|Absolute=True">Silk To Silk Clearance Constraint: (0.227mm &lt; 0.254mm) Between Text "A K" (17.834mm,5.868mm) on Top Overlay And Track (16.68mm,9.651mm)(18.624mm,4.958mm) on Top Overlay Silk Text to Silk Clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3059.819mil|Location2.X=3071.069mil|Location1.Y=1357.275mil|Location2.Y=1370.53mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3059.819mil|Location2.X=3071.069mil|Location1.Y=1357.275mil|Location2.Y=1370.53mil|Absolute=True">Silk To Silk Clearance Constraint: (0.227mm &lt; 0.254mm) Between Text "A K" (-17.834mm,-5.893mm) on Top Overlay And Track (-18.624mm,-4.983mm)(-16.68mm,-9.677mm) on Top Overlay Silk Text to Silk Clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3534.668mil|Location2.X=3547.922mil|Location1.Y=2304.199mil|Location2.Y=2315.449mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3534.668mil|Location2.X=3547.922mil|Location1.Y=2304.199mil|Location2.Y=2315.449mil|Absolute=True">Silk To Silk Clearance Constraint: (0.227mm &lt; 0.254mm) Between Text "A K" (-5.884mm,17.841mm) on Top Overlay And Track (-9.667mm,16.687mm)(-4.973mm,18.631mm) on Top Overlay Silk Text to Silk Clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4004.47mil|Location2.X=4017.725mil|Location1.Y=884.819mil|Location2.Y=896.069mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4004.47mil|Location2.X=4017.725mil|Location1.Y=884.819mil|Location2.Y=896.069mil|Absolute=True">Silk To Silk Clearance Constraint: (0.227mm &lt; 0.254mm) Between Text "A K" (5.893mm,-17.834mm) on Top Overlay And Track (4.983mm,-18.624mm)(9.677mm,-16.68mm) on Top Overlay Silk Text to Silk Clearance [0.227mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_odd" onmouseover="className = 'onmouseover_odd'" onmouseout="className = 'onmouseout_odd'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4104.709mil|Location2.X=4118.002mil|Location1.Y=2262.104mil|Location2.Y=2273.354mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=4104.709mil|Location2.X=4118.002mil|Location1.Y=2262.104mil|Location2.Y=2273.354mil|Absolute=True">Silk To Silk Clearance Constraint: (0.228mm &lt; 0.254mm) Between Text "A K" (8.44mm,16.772mm) on Top Overlay And Track (4.948mm,18.631mm)(9.641mm,16.687mm) on Top Overlay Silk Text to Silk Clearance [0.228mm]</acronym></a><br></td>
+</tr>
+<tr class="onmouseout_even" onmouseover="className = 'onmouseover_even'" onmouseout="className = 'onmouseout_even'">
+<td class="column1"><a href="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3434.041mil|Location2.X=3447.334mil|Location1.Y=926.646mil|Location2.Y=937.896mil|Absolute=True" class="callback"><acronym title="dxpprocess://PCB:Zoom?document=C:\Users\ngoqu\Documents\GitHub\PortableLighting\DenDaChien\CGCN PortableLighting\LED Group\LED_GROUP.PcbDoc;viewname=PCBEditor;Action=AREA_DYNAMICZOOM|Location1.X=3434.041mil|Location2.X=3447.334mil|Location1.Y=926.646mil|Location2.Y=937.896mil|Absolute=True">Silk To Silk Clearance Constraint: (0.228mm &lt; 0.254mm) Between Text "A K" (-8.44mm,-16.772mm) on Top Overlay And Track (-9.641mm,-16.687mm)(-4.948mm,-18.631mm) on Top Overlay Silk Text to Silk Clearance [0.228mm]</acronym></a><br></td>
+</tr>
+</table></a><hr color="#EEEEEE"><a href="#top" style="font-size: 0.9em">Back to top</a><br><br></body>
+</html>

@@ -1,0 +1,11 @@
+Removed Pin From Net: NetName=Anode Pin=L2-1
+Change Component Comment : Designator=L1 Old Comment=Jump d?c lo?i cong, 2.54mmLED 1 New Comment=Led
+Change Component Comment : Designator=L2 Old Comment=Jump d?c lo?i cong, 2.54mmLED 2 New Comment=Led
+Change component parameters: Designator = "L1"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\UIUJQJTI"
+Change component parameters. Clean all parameters for all variants
+Change component parameters: Designator = "L2"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\PKWETSCK"
+Change component parameters. Clean all parameters for all variants
+Added Net: Name=NetL1_A
+Added Pin To Net: NetName=NetL1_K Pin=L3-2
+Added Pin To Net: NetName=NetL1_K Pin=P1-2
+Added Net: Name=NetL1_K

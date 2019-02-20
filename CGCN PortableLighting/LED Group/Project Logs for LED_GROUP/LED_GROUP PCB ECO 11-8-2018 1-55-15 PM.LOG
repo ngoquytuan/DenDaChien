@@ -1,0 +1,13 @@
+Removed Pin From Net: NetName=Anode Pin=P1-1
+Removed Pin From Net: NetName=LEFT_CONTROL Pin=P1-2
+Removed Pin From Net: NetName=RIGHT_CONTROL Pin=P1-4
+Removed Pin From Net: NetName=Anode Pin=P1-5
+Removed Member From Class: ClassName=LED_GROUP Member=P1
+Added Component: Designator=CON(CON5)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "Connector 5"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=Anode Pin=CON-1
+Added Pin To Net: NetName=LEFT_CONTROL Pin=CON-2
+Added Pin To Net: NetName=RIGHT_CONTROL Pin=CON-4
+Added Pin To Net: NetName=Anode Pin=CON-5
+Added Member To Class: ClassName=LED_GROUP Member=Component CON JP5

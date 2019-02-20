@@ -1,0 +1,30 @@
+Removed Pin From Net: NetName=RIGHT_CONTROL Pin=R1-2
+Removed Pin From Net: NetName=Anode Pin=R2-1
+Removed Pin From Net: NetName=RIGHT_CONTROL Pin=R3-2
+Removed Pin From Net: NetName=Anode Pin=R4-1
+Change Component Footprint: Designator=R1 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Footprint: Designator=R2 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Footprint: Designator=R3 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Footprint: Designator=R4 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Comment : Designator=R1 Old Comment=Jump d?c lo?i cong, 2.54mmLED 5 New Comment=Led
+Change Component Comment : Designator=R2 Old Comment=Jump d?c lo?i cong, 2.54mmLED 6 New Comment=Led
+Change Component Comment : Designator=R3 Old Comment=Jump d?c lo?i cong, 2.54mmLED 7 New Comment=Led
+Change Component Comment : Designator=R4 Old Comment=Jump d?c lo?i cong, 2.54mmLED 8 New Comment=Led
+Change component parameters: Designator = "R1"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\KLTXUJXY"
+Change component parameters. Clean all parameters for all variants
+Change component parameters: Designator = "R2"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\EVMRLAWO"
+Change component parameters. Clean all parameters for all variants
+Change component parameters: Designator = "R3"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\JMAUJBIN"
+Change component parameters. Clean all parameters for all variants
+Change component parameters: Designator = "R4"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\TACAJCMM"
+Change component parameters. Clean all parameters for all variants
+Added Pin To Net: NetName=RIGHT_CONTROL Pin=R1-K
+Added Pin To Net: NetName=Anode Pin=R2-A
+Added Pin To Net: NetName=RIGHT_CONTROL Pin=R3-K
+Added Pin To Net: NetName=Anode Pin=R4-A
+Added Pin To Net: NetName=NetR1_A Pin=R1-A
+Added Pin To Net: NetName=NetR1_A Pin=R2-K
+Added Net: Name=NetR1_A
+Added Pin To Net: NetName=NetR3_A Pin=R3-A
+Added Pin To Net: NetName=NetR3_A Pin=R4-K
+Added Net: Name=NetR3_A

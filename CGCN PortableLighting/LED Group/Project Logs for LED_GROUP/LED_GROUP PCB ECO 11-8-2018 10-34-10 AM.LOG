@@ -1,0 +1,15 @@
+Removed Pin From Net: NetName=LEFT_CONTROL Pin=L3-2
+Removed Pin From Net: NetName=Anode Pin=L4-1
+Change Component Footprint: Designator=L3 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Footprint: Designator=L4 Old Footprint= New Footprint=LED OSRAM CIRCUIT
+Change Component Comment : Designator=L3 Old Comment=Jump d?c lo?i cong, 2.54mmLED 3 New Comment=Led
+Change Component Comment : Designator=L4 Old Comment=Jump d?c lo?i cong, 2.54mmLED 4 New Comment=Led
+Change component parameters: Designator = "L3"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\KQBTICLK"
+Change component parameters. Clean all parameters for all variants
+Change component parameters: Designator = "L4"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\FTARSFKJ"
+Change component parameters. Clean all parameters for all variants
+Added Pin To Net: NetName=LEFT_CONTROL Pin=L3-K
+Added Pin To Net: NetName=Anode Pin=L4-A
+Added Pin To Net: NetName=NetL3_A Pin=L3-A
+Added Pin To Net: NetName=NetL3_A Pin=L4-K
+Added Net: Name=NetL3_A

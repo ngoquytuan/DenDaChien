@@ -1,0 +1,93 @@
+Change Component Comment : Designator=L1 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 1 New Comment=Jump d?c lo?i cong, 2.54mmLED 1
+Change Component Comment : Designator=L2 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 2 New Comment=Jump d?c lo?i cong, 2.54mmLED 2
+Change Component Comment : Designator=L3 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 3 New Comment=Jump d?c lo?i cong, 2.54mmLED 3
+Change Component Comment : Designator=L4 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 4 New Comment=Jump d?c lo?i cong, 2.54mmLED 4
+Change Component Comment : Designator=R1 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 5 New Comment=Jump d?c lo?i cong, 2.54mmLED 5
+Change Component Comment : Designator=R2 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 6 New Comment=Jump d?c lo?i cong, 2.54mmLED 6
+Change Component Comment : Designator=R3 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 7 New Comment=Jump d?c lo?i cong, 2.54mmLED 7
+Change Component Comment : Designator=R4 Old Comment=Gi?c xanh lo?i n?m, 300V/16A - 5.08mm LED 8 New Comment=Jump d?c lo?i cong, 2.54mmLED 8
+Change Component Comment : Designator=P1 Old Comment=Header 5 New Comment=Jump d?c lo?i th?ng, 2.54mm 5P
+Change component parameters: Designator = "L2"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\EGPFICBU"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 2"; VariantName = "[No Variations]"
+Change component parameters: Designator = "L3"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\PIRISPLL"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 3"; VariantName = "[No Variations]"
+Change component parameters: Designator = "L4"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\DBCRWHDJ"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 4"; VariantName = "[No Variations]"
+Change component parameters: Designator = "R1"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\EBMOTBYR"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 5"; VariantName = "[No Variations]"
+Change component parameters: Designator = "R2"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\SMTBYKNS"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 6"; VariantName = "[No Variations]"
+Change component parameters: Designator = "R3"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\PJBKLQWL"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 7"; VariantName = "[No Variations]"
+Change component parameters: Designator = "R4"; Footprint = "LED OSRAM CIRCUIT"; UniqueID = "\QANAJRKU"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Type1"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 5.08mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type2"; Value = "Jump d?c lo?i th?ng, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type3"; Value = "Jumper"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type4"; Value = "Gi?c xanh lo?i n?m, 300V/16A - 3.81mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Type5"; Value = "Jump d?c lo?i cong, 2.54mm"; VariantName = "[No Variations]"
+Change component parameters (AddParameter): Name = "Value"; Value = "LED 8"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=NetL1_1 Pin=L1-1
+Added Pin To Net: NetName=NetL1_2 Pin=L1-2
+Added Pin To Net: NetName=NetL1_1 Pin=L2-2
+Added Pin To Net: NetName=NetL3_1 Pin=L3-1
+Added Pin To Net: NetName=NetL1_2 Pin=L3-2
+Added Pin To Net: NetName=NetL3_1 Pin=L4-2
+Added Pin To Net: NetName=NetL1_2 Pin=P1-2
+Added Pin To Net: NetName=NetP1_4 Pin=P1-4
+Added Pin To Net: NetName=NetR1_1 Pin=R1-1
+Added Pin To Net: NetName=NetP1_4 Pin=R1-2
+Added Pin To Net: NetName=NetR1_1 Pin=R2-2
+Added Pin To Net: NetName=NetR3_1 Pin=R3-1
+Added Pin To Net: NetName=NetP1_4 Pin=R3-2
+Added Pin To Net: NetName=NetR3_1 Pin=R4-2
+Added Pin To Net: NetName=Anode Pin=L2-1
+Added Pin To Net: NetName=Anode Pin=L4-1
+Added Pin To Net: NetName=Anode Pin=P1-1
+Added Pin To Net: NetName=Anode Pin=P1-5
+Added Pin To Net: NetName=Anode Pin=R2-1
+Added Pin To Net: NetName=Anode Pin=R4-1
+Added Net: Name=Anode
+Added Member To Class: ClassName=LED_GROUP Member=Component L2 Jump d?c lo?i cong, 2.54mmLED 2
+Added Member To Class: ClassName=LED_GROUP Member=Component L3 Jump d?c lo?i cong, 2.54mmLED 3
+Added Member To Class: ClassName=LED_GROUP Member=Component L4 Jump d?c lo?i cong, 2.54mmLED 4
+Added Member To Class: ClassName=LED_GROUP Member=Component R1 Jump d?c lo?i cong, 2.54mmLED 5
+Added Member To Class: ClassName=LED_GROUP Member=Component R2 Jump d?c lo?i cong, 2.54mmLED 6
+Added Member To Class: ClassName=LED_GROUP Member=Component R3 Jump d?c lo?i cong, 2.54mmLED 7
+Added Member To Class: ClassName=LED_GROUP Member=Component R4 Jump d?c lo?i cong, 2.54mmLED 8

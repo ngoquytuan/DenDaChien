@@ -1,0 +1,9 @@
+Added Component: Designator=L(LED OSRAM CIRCUIT)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=NetL1_A Pin=L1-A
+Added Pin To Net: NetName=LEFT_CONTROL Pin=L1-K
+Added Pin To Net: NetName=Anode Pin=L2-A
+Added Pin To Net: NetName=NetL1_A Pin=L2-K
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(110, 110, 255)
+Change Net Color : Old Net Color=RGB(158, 161, 117) New Net Color=RGB(110, 255, 110)
+Added Member To Class: ClassName=LED_GROUP Member=Component L Led
